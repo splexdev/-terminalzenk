@@ -10,7 +10,17 @@ const router = express.Router();
 
 const PIXGO_API = "https://pixgo.org/api/v1";
 const EXTERNAL_API_URL = "https://juliabuscas.shardweb.app";
-const DISCORD_WEBHOOK = (process.env.WEBHOOK_URL || process.env.DISCORD_WEBHOOK_URL || "").trim();
+function getDiscordWebhook() {
+    const url = (process.env.WEBHOOK_URL || process.env.DISCORD_WEBHOOK_URL || "").trim();
+    if (!url) return null;
+    if (!url.startsWith("https://discord.com/api/webhooks/") && !url.startsWith("https://discordapp.com/api/webhooks/")) {
+        console.warn("⚠️ DISCORD_WEBHOOK inválido - deve começar com https://discord.com/api/webhooks/");
+        return null;
+    }
+    return url;
+}
+
+const DISCORD_WEBHOOK = getDiscordWebhook();
 
 const planDurations = {
     '1d': 1 * 24 * 60 * 60 * 1000,
@@ -79,7 +89,11 @@ router.post('/create', auth, async (req, res) => {
                             timestamp: new Date().toISOString()
                         };
 
-                        await axios.post(DISCORD_WEBHOOK, { embeds: [embed] }).catch(() => {});
+                        if (DISCORD_WEBHOOK) {
+                            await axios.post(DISCORD_WEBHOOK, { embeds: [embed] }).catch((err) => {
+                                console.error("❌ Erro ao enviar log Discord (Socket):", err.message);
+                            });
+                        }
                         console.log(`✅ Pagamento Confirmado via Socket para: ${user.username}`);
                     }
                 }
@@ -165,13 +179,10 @@ router.post('/webhook', async (req, res) => {
                         timestamp: new Date().toISOString()
                     };
                     
-                    try {
-                        if (DISCORD_WEBHOOK) {
-                            await axios.post(DISCORD_WEBHOOK, { embeds: [embed] });
-                        }
-                    } catch (err) {
-                        console.error('❌ Erro ao enviar log para o Discord:', err.message);
-                        console.error('Link tentado (Tamanho:', DISCORD_WEBHOOK.length, '):', DISCORD_WEBHOOK);
+                    if (DISCORD_WEBHOOK) {
+                        await axios.post(DISCORD_WEBHOOK, { embeds: [embed] }).catch((err) => {
+                            console.error("❌ Erro ao enviar log Discord (Webhook):", err.message);
+                        });
                     }
 
                     console.log(`✅ Webhook Confirmado: Saldo de ${duration / (24 * 60 * 60 * 1000)} dias ativado para ${user.username}`);
