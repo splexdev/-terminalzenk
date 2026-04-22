@@ -6,16 +6,39 @@ import { verifyRecaptcha } from '../utils/recaptcha.js';
 
 const router = express.Router();
 
+function sanitizeInput(str) {
+    if (typeof str !== 'string') return '';
+    return str.trim().slice(0, 100);
+}
+
+function isValidUsername(username) {
+    return /^[a-zA-Z0-9_]{3,30}$/.test(username);
+}
+
+function isValidPassword(password) {
+    return typeof password === 'string' && password.length >= 6 && password.length <= 128;
+}
+
 router.post('/register', async (req, res) => {
     try {
-        const { username, password, captchaToken } = req.body;
+        const username = sanitizeInput(req.body.username);
+        const password = req.body.password;
+        const captchaToken = req.body.captchaToken;
 
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required.' });
         }
+        
+        if (!isValidUsername(username)) {
+            return res.status(400).json({ error: 'Username deve ter 3-30 caracteres (letras, numeros, _).' });
+        }
+        
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ error: 'Senha deve ter entre 6 e 128 caracteres.' });
+        }
 
         const isHuman = await verifyRecaptcha(captchaToken);
-        if (!isHuman) return res.status(403).json({ error: 'Falha na verificação de robô (Captcha inválido).' });
+        if (!isHuman) return res.status(403).json({ error: 'Falha na verificacao de robo (Captcha invalido).' });
 
         let user = await users.findOne({ username });
         if (user) return res.status(400).json({ error: 'Username already exists.' });
@@ -45,10 +68,16 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { username, password, captchaToken } = req.body;
+        const username = sanitizeInput(req.body.username);
+        const password = req.body.password;
+        const captchaToken = req.body.captchaToken;
+        
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username e senha sao obrigatorios.' });
+        }
 
         const isHuman = await verifyRecaptcha(captchaToken);
-        if (!isHuman) return res.status(403).json({ error: 'Falha na verificação de robô (Captcha inválido).' });
+        if (!isHuman) return res.status(403).json({ error: 'Falha na verificacao de robo (Captcha invalido).' });
 
         const user = await users.findOne({ username });
         if (!user) return res.status(400).json({ error: 'Invalid username or password.' });

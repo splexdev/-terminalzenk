@@ -35,7 +35,15 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100
 });
+
+const webhookLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: 'Too many webhook requests'
+});
+
 app.use('/api/', limiter);
+app.use('/api/pix/webhook', webhookLimiter);
 
 app.use(express.static(path.join(__dirname, '../public')));
 

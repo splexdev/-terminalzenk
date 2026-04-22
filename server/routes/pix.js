@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import { auth } from '../middleware/auth.js';
 import { users } from '../database/mongodb/users.js';
 import axios from 'axios';
@@ -43,7 +44,7 @@ router.post('/create', auth, async (req, res) => {
         const response = await axios.post(`${PIXGO_API}/payment/create`, {
             amount: planInfo.price,
             description: `Terminal Zenk - Plano ${planInfo.name}`,
-            webhook_url: `${APP_URL}/api/pix/webhook?secret=${process.env.WEBHOOK_SECRET || 'ZenkAdmin777'}`,
+            webhook_url: `${APP_URL}/api/pix/webhook?secret=${process.env.WEBHOOK_SECRET}`,
             external_id: `${userId}|${Date.now()}`
         }, {
             headers: { 
@@ -116,12 +117,25 @@ router.post('/create', auth, async (req, res) => {
         res.status(err.response?.status || 500).json({ error: errMsg });
     }
 });
+
+function safeCompare(a, b) {
+    if (!a || !b || a.length !== b.length) return false;
+    return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
+
 router.post('/webhook', async (req, res) => {
     try {
         const { secret } = req.query;
-        if (secret !== (process.env.WEBHOOK_SECRET || 'ZenkAdmin777')) {
-            console.warn('Tentativa de spoofing no Webhook! Token Inválido detectado.');
-            return res.status(401).send('Unauthorized Token');
+        const expectedSecret = process.env.WEBHOOK_SECRET;
+        
+        if (!expectedSecret) {
+            console.error('WEBHOOK_SECRET nao configurado nas variaveis de ambiente');
+            return res.status(500).send('Server Error');
+        }
+        
+        if (!safeCompare(secret, expectedSecret)) {
+            console.warn('Tentativa de spoofing no Webhook! Token Invalido detectado.');
+            return res.status(401).send('Unauthorized');
         }
 
         const payload = req.body;
