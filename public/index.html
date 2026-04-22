@@ -77,18 +77,30 @@
                 <div class="auth-right-blur"></div>
                 <div class="auth-right-content">
                     <div class="badge-pro" style="color: var(--accent); border-color: var(--accent);">
-                        <i class="fas fa-shield-check"></i> PROTEÇÃO DE DADOS
+                        <i class="fas fa-shield-check"></i> OSINT LEGALIZADA
                     </div>
-                    <h2>Inteligência amparada na Lei.</h2>
-                    <p>O TerminalZenk compila e refina apenas dados abertos (OSINT - Open Source Intelligence), extraídos de vias completamente públicas.</p>
+                    <h2>Inteligencia de dados na palma da mao.</h2>
+                    <p>Plataforma enterprise de inteligencia OSINT. Dados publicos compilados e refinados para investigacao corporativa e prevencao de fraudes.</p>
                     <div class="auth-features">
-                        <span><i class="fas fa-gavel"></i> 100% Compatível com a LGPD</span>
-                        <span><i class="fas fa-search-location"></i> Fontes OSINT Abertas e Globais</span>
-                        <span><i class="fas fa-lock"></i> Política Rigorosa Antivazamento</span>
+                        <span><i class="fas fa-bolt"></i> Consultas em tempo real</span>
+                        <span><i class="fas fa-database"></i> +15 bases de dados integradas</span>
+                        <span><i class="fas fa-shield-alt"></i> 100% compativel com a LGPD</span>
                     </div>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1.5rem; line-height: 1.5;">
-                        <b style="color: white; font-weight: 500;">MÓDULOS DE CONSULTA:</b> CPF, CNH, CNPJ, Placa Vehicular, Chassi, CEP, Telefone, E-mail, Pesquisa por Nome, Identidade Geral (RG) e Título Eleitoral.
-                    </p>
+                    <div class="auth-modules" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">Modulos disponiveis</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            <span class="module-chip">CPF</span>
+                            <span class="module-chip">CNH</span>
+                            <span class="module-chip">CNPJ</span>
+                            <span class="module-chip">Placa</span>
+                            <span class="module-chip">Chassi</span>
+                            <span class="module-chip">Telefone</span>
+                            <span class="module-chip">Email</span>
+                            <span class="module-chip">Nome</span>
+                            <span class="module-chip">RG</span>
+                            <span class="module-chip">Foto</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,37 +111,54 @@
         <div class="auth-split">
             <div class="auth-left">
                 <div class="auth-form-wrapper" style="text-align: center;">
-                    <div class="premium-logo-box" style="margin: 0 auto 1.5rem auto; border-color: #ef4444; color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);">
+                    <div class="sales-lock-icon">
                         <i class="fas fa-lock"></i>
+                        <div class="sales-lock-ring"></div>
                     </div>
-                    <h1 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 2rem;">Acesso Restrito</h1>
-                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Plano ativo necessário para liberação total do sistema e desbloqueio de todos os módulos de busca avançada.</p>
+                    <h1 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.75rem;">Acesso Restrito</h1>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem; line-height: 1.6;">Adquira um plano para liberar todos os modulos de consulta avancada.</p>
                     
                     <div class="sales-actions">
-                        <button id="sales-btn-plans" class="btn-premium btn-glow" style="width: 100%; margin-bottom: 1rem;"><i class="fas fa-crown"></i> ADQUIRIR ACESSO VIP</button>
-                        <button id="sales-btn-redeem" class="btn-outline" style="width: 100%; justify-content: center;"><i class="fas fa-key"></i> Resgatar Key</button>
+                        <button id="sales-btn-plans" class="btn-premium btn-glow" style="width: 100%; margin-bottom: 1rem; font-size: 1rem; padding: 1rem;"><i class="fas fa-crown"></i> ADQUIRIR ACESSO VIP</button>
+                        <button id="sales-btn-redeem" class="btn-outline" style="width: 100%; justify-content: center;"><i class="fas fa-key"></i> Tenho uma Key</button>
                     </div>
 
                     <div class="sales-support-links" style="margin-top: 2rem; display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
-                        <button id="sales-btn-updates" class="btn-ghost" style="font-size: 0.8rem;">Novidades</button>
-                        <a href="https://t.me/zenkbuscabot" target="_blank" class="btn-ghost" style="font-size: 0.8rem;"><i class="fab fa-telegram"></i> Suporte</a>
-                        <button id="sales-logout" class="btn-ghost" style="color: #ef4444; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                        <button id="sales-btn-updates" class="btn-ghost" style="font-size: 0.8rem;"><i class="fas fa-bolt"></i> Novidades</button>
+                        <a href="https://t.me/zenkbuscabot" target="_blank" class="btn-ghost" style="font-size: 0.8rem; text-decoration: none;"><i class="fab fa-telegram"></i> Suporte</a>
+                        <button id="sales-logout" class="btn-ghost" style="color: var(--danger); font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Sair</button>
                     </div>
                 </div>
             </div>
             <div class="auth-right">
-                 <div class="auth-right-blur" style="background: radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(0,0,0,0) 70%);"></div>
+                 <div class="auth-right-blur" style="background: radial-gradient(circle, rgba(239,68,68,0.1) 0%, transparent 60%);"></div>
                  <div class="auth-right-content">
-                    <h2>Atualize para desbloquear os módulos.</h2>
-                    <p>Estruture e cruze informações de vias públicas na internet. Use OSINT legalizada para prevenção de fraudes e avaliação de risco corporativo.</p>
-                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color);">
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">Tenha acesso completo aos rastreadores:</p>
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <span class="source-item" style="cursor: default;">CPF / CNH</span>
-                            <span class="source-item" style="cursor: default;">CNPJ Corporativo</span>
-                            <span class="source-item" style="cursor: default;">Placa / Chassi</span>
-                            <span class="source-item" style="cursor: default;">Telefone / CEP</span>
-                            <span class="source-item" style="cursor: default;">RG / Título / Foto</span>
+                    <div class="badge-pro" style="color: var(--danger); border-color: var(--danger);">
+                        <i class="fas fa-lock"></i> PREMIUM REQUIRED
+                    </div>
+                    <h2>Desbloqueie todo o potencial.</h2>
+                    <p>Acesso ilimitado a todas as bases de dados e modulos de consulta avancada para investigacao corporativa.</p>
+                    <div class="sales-features">
+                        <div class="sales-feature-item">
+                            <i class="fas fa-infinity"></i>
+                            <div>
+                                <h4>Consultas Ilimitadas</h4>
+                                <p>Sem restricao de quantidade</p>
+                            </div>
+                        </div>
+                        <div class="sales-feature-item">
+                            <i class="fas fa-database"></i>
+                            <div>
+                                <h4>15+ Bases de Dados</h4>
+                                <p>Acesso completo a todas as fontes</p>
+                            </div>
+                        </div>
+                        <div class="sales-feature-item">
+                            <i class="fas fa-headset"></i>
+                            <div>
+                                <h4>Suporte Prioritario</h4>
+                                <p>Atendimento direto com o dev</p>
+                            </div>
                         </div>
                     </div>
                  </div>
@@ -223,53 +252,107 @@
                     <div id="recaptcha-search" style="margin-top: 1rem; display: flex; justify-content: center;"></div>
                     
                     <div id="search-loader" class="query-loader hidden">
-                        <div class="spinner"></div>
-                        <span>Coletando informações em bases protegidas...</span>
+                        <div class="search-loader-box">
+                            <div class="search-loader-icon">
+                                <i class="fas fa-satellite-dish"></i>
+                            </div>
+                            <div class="search-loader-content">
+                                <div class="search-loader-bar">
+                                    <div class="search-loader-progress"></div>
+                                </div>
+                                <span class="search-loader-text">Conectando com as bases de dados...</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 
                 <section id="results-container" class="results-area">
                     <div id="dashboard-welcome" class="welcome-box">
-                        <i class="fas fa-network-wired"></i>
-                        <h3>Terminal Operacional</h3>
-                        <p>Selecione um módulo no menu lateral para iniciar o rastreamento.</p>
+                        <div class="welcome-icon-wrapper">
+                            <i class="fas fa-crosshairs"></i>
+                            <div class="welcome-icon-ring"></div>
+                        </div>
+                        <h3>Terminal Operacional Ativo</h3>
+                        <p>Selecione um modulo acima e insira o dado para iniciar o rastreamento.</p>
+                        <div class="welcome-stats">
+                            <div class="welcome-stat">
+                                <span class="welcome-stat-value">99.9%</span>
+                                <span class="welcome-stat-label">Uptime</span>
+                            </div>
+                            <div class="welcome-stat-divider"></div>
+                            <div class="welcome-stat">
+                                <span class="welcome-stat-value">&lt;2s</span>
+                                <span class="welcome-stat-label">Resposta</span>
+                            </div>
+                            <div class="welcome-stat-divider"></div>
+                            <div class="welcome-stat">
+                                <span class="welcome-stat-value">15+</span>
+                                <span class="welcome-stat-label">Bases</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="profile-container" class="hidden">
                         <button id="btn-back-to-search" class="btn-outline" style="margin-bottom: 1.5rem; width: 100%; border-color: rgba(255,255,255,0.1);"><i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i> Voltar para Buscas</button>
+                        
+                        <div class="profile-header-card">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h3 id="profile-username">Operador</h3>
+                                <span id="profile-role" class="profile-role-badge">Usuario</span>
+                            </div>
+                            <div class="profile-status">
+                                <div class="pulse-dot"></div>
+                                <span>Online</span>
+                            </div>
+                        </div>
+                        
                         <div class="stats-grid">
                             <div class="stat-card">
-                                <h4>Status da Licença</h4>
+                                <div class="stat-card-header">
+                                    <i class="fas fa-clock"></i>
+                                    <h4>Status da Licenca</h4>
+                                </div>
                                 <div class="timer-display">
                                     <h2 id="timer-countdown">00d 00h</h2>
                                     <span id="plan-status-text" class="status-badge active">----</span>
                                 </div>
                                 <div class="stat-details">
-                                    <div><span>Início:</span> <b id="plan-start-date">--</b></div>
-                                    <div><span>Expiração:</span> <b id="plan-end-date">--</b></div>
+                                    <div><span>Inicio:</span> <b id="plan-start-date">--</b></div>
+                                    <div><span>Expiracao:</span> <b id="plan-end-date">--</b></div>
                                 </div>
                             </div>
                             <div class="stat-card">
-                                <h4>Métricas do Operador</h4>
+                                <div class="stat-card-header">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <h4>Metricas do Operador</h4>
+                                </div>
                                 <div class="intel-metrics">
                                     <div class="metric">
                                         <span class="metric-label">Total de buscas realizadas</span>
                                         <h3 id="stat-queries">0</h3>
                                     </div>
                                     <div class="metric">
-                                        <span class="metric-label">Nível Hierárquico</span>
-                                        <h3 id="stat-role" class="text-accent">USUÁRIO</h3>
+                                        <span class="metric-label">Nivel Hierarquico</span>
+                                        <h3 id="stat-role" class="text-accent">USUARIO</h3>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="stat-card" style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-color: var(--accent);">
-                                <div>
-                                    <h4 style="margin-bottom: 0.4rem; color: white;"><i class="fas fa-code"></i> Suporte Direto com o Desenvolvedor</h4>
-                                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Encontrou alguma anomalia, precisa de ajuda técnica ou quer sugerir um novo módulo? Fale agora mesmo com nosso engenheiro.</p>
+                            <div class="stat-card support-card">
+                                <div class="support-card-content">
+                                    <div class="support-icon">
+                                        <i class="fab fa-telegram"></i>
+                                    </div>
+                                    <div class="support-text">
+                                        <h4>Suporte Direto</h4>
+                                        <p>Fale diretamente com o desenvolvedor para sugestoes, duvidas ou reportar problemas.</p>
+                                    </div>
                                 </div>
-                                <a href="https://t.me/zenkbuscabot" target="_blank" class="btn-premium btn-glow" style="text-decoration: none; width: auto; margin: 0; white-space: nowrap;"><i class="fab fa-telegram"></i> Falar com o Dev</a>
+                                <a href="https://t.me/zenkbuscabot" target="_blank" class="btn-premium btn-glow support-btn"><i class="fab fa-telegram"></i> Abrir Chat</a>
                             </div>
                         </div>
                     </div>

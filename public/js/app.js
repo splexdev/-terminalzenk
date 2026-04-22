@@ -6,6 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
             modalContainer.classList.add('hidden');
         });
     }
+    
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-premium, .btn-query, .btn-outline, .plan-item, .nav-item');
+        if (btn) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
+            ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+            btn.style.position = 'relative';
+            btn.style.overflow = 'hidden';
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+    });
 });
 
 window.openPlanModal = async () => {
@@ -22,17 +39,22 @@ window.openPlanModal = async () => {
         const plans = await res.json();
         
         modalBody.innerHTML = `
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">Selecione o plano ideal para suas necessidades de consulta.</p>
             <div class="plan-list">
-                ${plans.map(p => `
-                    <div class="plan-item" data-plan="${p.id}">
+                ${plans.map((p, i) => `
+                    <div class="plan-item" data-plan="${p.id}" style="animation-delay: ${i * 0.1}s;">
                         <div class="plan-info">
-                            <h4>${p.name}</h4>
-                            <p>${p.duration} de acesso total</p>
+                            <h4><i class="fas fa-${i === plans.length - 1 ? 'crown' : 'bolt'}" style="color: var(--accent); margin-right: 0.5rem;"></i>${p.name}</h4>
+                            <p><i class="fas fa-clock" style="margin-right: 0.3rem; opacity: 0.7;"></i>${p.duration} de acesso ilimitado</p>
                         </div>
-                        <div class="plan-price">${p.priceFormatted}</div>
+                        <div class="plan-price-box">
+                            <span class="plan-price">${p.priceFormatted}</span>
+                            <span class="plan-price-label">PIX</span>
+                        </div>
                     </div>
                 `).join('')}
             </div>
+            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 1rem; text-align: center;"><i class="fas fa-lock" style="margin-right: 0.3rem;"></i>Pagamento 100% seguro via PIX</p>
         `;
 
         document.querySelectorAll('.plan-item').forEach(item => {
@@ -54,18 +76,23 @@ window.openPlanModal = async () => {
                     if (res.ok) {
                         modalBody.innerHTML = `
                             <div class="pix-container" style="text-align: center;">
-                                <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Escaneie o QR Code abaixo:</p>
-                                <div class="pix-qr">
+                                <div class="pix-status-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent-glow); border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 20px; margin-bottom: 1.5rem;">
+                                    <div class="pulse-dot" style="width: 8px; height: 8px;"></div>
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: var(--accent);">AGUARDANDO PAGAMENTO</span>
+                                </div>
+                                <div class="pix-qr" style="position: relative;">
                                     <img src="${data.qrcode}" alt="Pix QR Code">
                                 </div>
-                                <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Ou use o Pix Copia e Cola:</p>
+                                <p style="color: var(--text-secondary); margin-bottom: 0.75rem; font-size: 0.9rem;">Pix Copia e Cola:</p>
                                 <div class="copy-box" onclick="navigator.clipboard.writeText('${data.copy_paste}'); showToast('Copiado!', 'success')">
-                                    ${data.copy_paste}
+                                    <i class="fas fa-copy" style="margin-right: 0.5rem; color: var(--accent);"></i>Clique para copiar
                                 </div>
-                                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--accent); font-size: 0.85rem;">
-                                    <div class="spinner" style="width: 16px; height: 16px; border-width: 2px; border-top-color: var(--accent);"></div> 
-                                    <span>A liberação é feita automaticamente.</span>
-                                    <span style="opacity: 0.8; font-size: 0.75rem;">Aguarde até 5 minutos para a ativação do plano.</span>
+                                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; color: var(--accent); font-size: 0.85rem;">
+                                        <div class="spinner" style="width: 18px; height: 18px; border-width: 2px; border-top-color: var(--accent);"></div> 
+                                        <span>Aguardando confirmacao...</span>
+                                    </div>
+                                    <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.75rem;">A liberacao e automatica apos o pagamento.</p>
                                 </div>
                             </div>
                         `;
@@ -85,13 +112,20 @@ window.openRedeemModal = () => {
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
 
-    modalTitle.textContent = 'Resgatar Key';
+    modalTitle.textContent = 'Resgatar Key de Acesso';
     modalBody.innerHTML = `
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="width: 60px; height: 60px; background: var(--accent-glow); border: 1px solid var(--accent); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+                <i class="fas fa-key" style="font-size: 1.5rem; color: var(--accent);"></i>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Insira sua key de acesso para ativar seu plano instantaneamente.</p>
+        </div>
         <div class="input-field">
             <label>Token de Acesso</label>
-            <input type="text" id="redeem-key-input" placeholder="Cole sua Key aqui (ex: ELITE-...)">
+            <input type="text" id="redeem-key-input" placeholder="Ex: ELITE-XXXX-XXXX-XXXX" style="text-transform: uppercase; text-align: center; letter-spacing: 1px;">
         </div>
-        <button id="confirm-redeem" class="btn-premium btn-glow" style="margin-top: 0.5rem;"><i class="fas fa-check"></i> Autenticar Token</button>
+        <button id="confirm-redeem" class="btn-premium btn-glow" style="margin-top: 0.5rem;"><i class="fas fa-unlock"></i> Ativar Acesso</button>
+        <p style="color: var(--text-muted); font-size: 0.75rem; text-align: center; margin-top: 1rem;"><i class="fas fa-info-circle" style="margin-right: 0.3rem;"></i>Keys sao de uso unico e intransferiveis.</p>
     `;
     modalContainer.classList.remove('hidden');
 

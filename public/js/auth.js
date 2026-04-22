@@ -155,9 +155,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showToast = (message, type = '') => {
         const toast = document.getElementById('toast');
-        toast.textContent = message;
+        const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : 
+                     type === 'error' ? '<i class="fas fa-exclamation-circle"></i>' : 
+                     '<i class="fas fa-info-circle"></i>';
+        toast.innerHTML = `${icon}<span>${message}</span>`;
         toast.className = `toast ${type}`;
         toast.classList.remove('hidden');
+        toast.style.animation = 'none';
+        toast.offsetHeight;
+        toast.style.animation = 'slideUp 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards';
         setTimeout(() => toast.classList.add('hidden'), 3000);
     };
 
