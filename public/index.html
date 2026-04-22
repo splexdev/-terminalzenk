@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerminalZenk | Inteligência de Dados</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+    <script>
+        let loginWidget, registerWidget, searchWidget;
+        function onRecaptchaLoad() {
+            if(document.getElementById('recaptcha-login')) {
+                loginWidget = grecaptcha.render('recaptcha-login', { 'sitekey' : '6LdQKcEsAAAAAH4pXdtCrTuadStl-EhCVelAlBYF', 'theme' : 'dark' });
+            }
+            if(document.getElementById('recaptcha-register')) {
+                registerWidget = grecaptcha.render('recaptcha-register', { 'sitekey' : '6LdQKcEsAAAAAH4pXdtCrTuadStl-EhCVelAlBYF', 'theme' : 'dark' });
+            }
+            if(document.getElementById('recaptcha-search')) {
+                searchWidget = grecaptcha.render('recaptcha-search', { 'sitekey' : '6LdQKcEsAAAAAH4pXdtCrTuadStl-EhCVelAlBYF', 'theme' : 'dark' });
+            }
+        }
+    </script>
+</head>
+<body class="dark-theme">
+
+    
+    <div id="auth-container" class="auth-screen hidden">
+        <div class="auth-split">
+            <div class="auth-left">
+                <div class="auth-form-wrapper">
+                    <div class="auth-header">
+                        <div class="premium-logo-box">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h1>Terminal<span>Zenk</span></h1>
+                        <p>Plataforma enterprise de inteligência de dados. Conexão segura estabelecida.</p>
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="input-field">
+                            <label>ID do Operador (Usuário)</label>
+                            <input type="text" id="login-username" placeholder="Digite seu usuário" required>
+                        </div>
+                        <div class="input-field">
+                            <label>Chave de Acesso (Senha)</label>
+                            <input type="password" id="login-password" placeholder="••••••••" required>
+                        </div>
+                        <div id="recaptcha-login" style="margin-bottom: 1rem; display: flex; justify-content: center;"></div>
+                        <button type="submit" class="btn-premium">Autenticar <i class="fas fa-arrow-right"></i></button>
+                        <p class="auth-switch">Sem acesso? <a href="#" id="show-register">Criar Conta</a></p>
+                    </form>
+
+                    <form id="register-form" class="hidden">
+                        <div class="input-field">
+                            <label>Usuário Desejado</label>
+                            <input type="text" id="reg-username" placeholder="Digite seu usuário" required>
+                        </div>
+                        <div class="input-field">
+                            <label>Criar Senha</label>
+                            <input type="password" id="reg-password" placeholder="••••••••" required>
+                        </div>
+                        <div id="recaptcha-register" style="margin-bottom: 1rem; display: flex; justify-content: center;"></div>
+                        <button type="submit" class="btn-premium">Inicializar Cadastro <i class="fas fa-arrow-right"></i></button>
+                        <p class="auth-switch">Já possui registro? <a href="#" id="show-login">Retornar ao Login</a></p>
+                    </form>
+
+                    <div class="auth-footer-links" style="margin-top: 2rem; text-align: center;">
+                        <button id="auth-btn-updates" class="btn-ghost" style="margin: 0 auto; color: var(--accent);"><i class="fas fa-bolt"></i> Atualizações do Sistema</button>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-right">
+                <div class="auth-right-blur"></div>
+                <div class="auth-right-content">
+                    <div class="badge-pro" style="color: var(--accent); border-color: var(--accent);">
+                        <i class="fas fa-shield-check"></i> PROTEÇÃO DE DADOS
+                    </div>
+                    <h2>Inteligência amparada na Lei.</h2>
+                    <p>O TerminalZenk compila e refina apenas dados abertos (OSINT - Open Source Intelligence), extraídos de vias completamente públicas.</p>
+                    <div class="auth-features">
+                        <span><i class="fas fa-gavel"></i> 100% Compatível com a LGPD</span>
+                        <span><i class="fas fa-search-location"></i> Fontes OSINT Abertas e Globais</span>
+                        <span><i class="fas fa-lock"></i> Política Rigorosa Antivazamento</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1.5rem; line-height: 1.5;">
+                        <b style="color: white; font-weight: 500;">MÓDULOS DE CONSULTA:</b> CPF, CNH, CNPJ, Placa Vehicular, Chassi, CEP, Telefone, E-mail, Pesquisa por Nome, Identidade Geral (RG) e Título Eleitoral.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="sales-container" class="auth-screen hidden">
+        <div class="auth-split">
+            <div class="auth-left">
+                <div class="auth-form-wrapper" style="text-align: center;">
+                    <div class="premium-logo-box" style="margin: 0 auto 1.5rem auto; border-color: #ef4444; color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h1 style="margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 2rem;">Acesso Restrito</h1>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Plano ativo necessário para liberação total do sistema e desbloqueio de todos os módulos de busca avançada.</p>
+                    
+                    <div class="sales-actions">
+                        <button id="sales-btn-plans" class="btn-premium btn-glow" style="width: 100%; margin-bottom: 1rem;"><i class="fas fa-crown"></i> ADQUIRIR ACESSO VIP</button>
+                        <button id="sales-btn-redeem" class="btn-outline" style="width: 100%; justify-content: center;"><i class="fas fa-key"></i> Resgatar Key</button>
+                    </div>
+
+                    <div class="sales-support-links" style="margin-top: 2rem; display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
+                        <button id="sales-btn-updates" class="btn-ghost" style="font-size: 0.8rem;">Novidades</button>
+                        <a href="https://t.me/zenkbuscabot" target="_blank" class="btn-ghost" style="font-size: 0.8rem;"><i class="fab fa-telegram"></i> Suporte</a>
+                        <button id="sales-logout" class="btn-ghost" style="color: #ef4444; font-size: 0.8rem;"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-right">
+                 <div class="auth-right-blur" style="background: radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(0,0,0,0) 70%);"></div>
+                 <div class="auth-right-content">
+                    <h2>Atualize para desbloquear os módulos.</h2>
+                    <p>Estruture e cruze informações de vias públicas na internet. Use OSINT legalizada para prevenção de fraudes e avaliação de risco corporativo.</p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color);">
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">Tenha acesso completo aos rastreadores:</p>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="source-item" style="cursor: default;">CPF / CNH</span>
+                            <span class="source-item" style="cursor: default;">CNPJ Corporativo</span>
+                            <span class="source-item" style="cursor: default;">Placa / Chassi</span>
+                            <span class="source-item" style="cursor: default;">Telefone / CEP</span>
+                            <span class="source-item" style="cursor: default;">RG / Título / Foto</span>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="app-container" class="app-layout hidden">
+        <aside id="sidebar" class="premium-sidebar">
+            <div class="sidebar-logo">
+                 <div class="premium-logo-box-mini"><i class="fas fa-shield-alt"></i></div>
+                 <span class="logo-text">Terminal<span>Zenk</span></span>
+                 <button class="mobile-close" id="mobile-menu-toggle"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <nav class="premium-nav">
+                <div class="nav-group">
+                    <span class="nav-title">Navegação Utama</span>
+                    <a href="#" class="nav-item" id="nav-profile"><i class="fas fa-layer-group"></i> Meu Perfil</a>
+                    <a href="#" class="nav-item" id="nav-updates"><i class="fas fa-bolt"></i> Novidades</a>
+                </div>
+
+                <div id="admin-menu" class="nav-group hidden">
+                    <span class="nav-title" style="color: #ef4444;">Sistema Operacional</span>
+                    <a href="#" class="nav-item" id="nav-admin-keys"><i class="fas fa-key"></i> Gerenciador de Acessos</a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Desconectar</button>
+            </div>
+        </aside>
+
+        <main class="main-workspace">
+            <header class="workspace-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="mobile-menu-toggle-open"><i class="fas fa-bars"></i></button>
+                    <div>
+                        <h2 id="current-module-title">Painel de Controle</h2>
+                        <p id="current-module-desc" class="text-muted">Aguardando definição do alvo.</p>
+                    </div>
+                </div>
+                <div class="header-right" style="gap: 1rem; display: flex; align-items: center;">
+                    <div class="desktop-only" style="gap: 0.8rem;">
+                        <button id="btn-desktop-redeem" class="btn-outline" style="padding: 0.4rem 1rem; font-size: 0.85rem;"><i class="fas fa-key"></i> Resgatar</button>
+                        <button id="btn-desktop-plans" class="btn-outline text-accent" style="border-color: var(--accent); padding: 0.4rem 1rem; font-size: 0.85rem;"><i class="fas fa-crown"></i> VIP</button>
+                    </div>
+                    <div class="status-indicator desktop-only">
+                        <div class="pulse-dot"></div> Sistema Online
+                    </div>
+                    <div class="user-badge">
+                        <div id="user-plan" class="plan-tag">Carregando...</div>
+                        <span id="user-name">Operador</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="workspace-content">
+                
+                <section class="search-area">
+
+                    <div id="module-selector-container" class="source-select-wrapper" style="margin-bottom: 0.5rem;">
+                        <i class="fas fa-crosshairs select-icon" style="color: white;"></i>
+                        <select id="master-module-select" class="premium-select" style="border-color: rgba(255,255,255,0.2); font-weight: 600;">
+                            <option value="cpf">MÓDULO: CPF</option>
+                            <option value="cnh">MÓDULO: CNH</option>
+                            <option value="cnpj">MÓDULO: CNPJ</option>
+                            <option value="placa">MÓDULO: PLACA</option>
+                            <option value="chassi">MÓDULO: CHASSI</option>
+                            <option value="cep">MÓDULO: CEP</option>
+                            <option value="telefone">MÓDULO: TELEFONE</option>
+                            <option value="email">MÓDULO: EMAIL</option>
+                            <option value="nome">MÓDULO: NOME / PARENTES</option>
+                            <option value="rg">MÓDULO: RG</option>
+                            <option value="cns">MÓDULO: CNS</option>
+                            <option value="titulo">MÓDULO: TÍTULO DE ELEITOR</option>
+                            <option value="foto">MÓDULO: FOTOGRAFIA</option>
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                    <div id="source-selector-container" class="source-pills">
+                    </div>
+
+                    <div class="search-bar-wrapper">
+                        <i class="fas fa-search search-icon-left"></i>
+                        <input type="text" id="search-query" placeholder="Insira o CPF do alvo aqui...">
+                        <button id="search-btn" class="btn-query">BUSCAR</button>
+                    </div>
+                    <div id="recaptcha-search" style="margin-top: 1rem; display: flex; justify-content: center;"></div>
+                    
+                    <div id="search-loader" class="query-loader hidden">
+                        <div class="spinner"></div>
+                        <span>Coletando informações em bases protegidas...</span>
+                    </div>
+                </section>
+
+                
+                <section id="results-container" class="results-area">
+                    <div id="dashboard-welcome" class="welcome-box">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>Terminal Operacional</h3>
+                        <p>Selecione um módulo no menu lateral para iniciar o rastreamento.</p>
+                    </div>
+
+                    <div id="profile-container" class="hidden">
+                        <button id="btn-back-to-search" class="btn-outline" style="margin-bottom: 1.5rem; width: 100%; border-color: rgba(255,255,255,0.1);"><i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i> Voltar para Buscas</button>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h4>Status da Licença</h4>
+                                <div class="timer-display">
+                                    <h2 id="timer-countdown">00d 00h</h2>
+                                    <span id="plan-status-text" class="status-badge active">----</span>
+                                </div>
+                                <div class="stat-details">
+                                    <div><span>Início:</span> <b id="plan-start-date">--</b></div>
+                                    <div><span>Expiração:</span> <b id="plan-end-date">--</b></div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Métricas do Operador</h4>
+                                <div class="intel-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">Total de buscas realizadas</span>
+                                        <h3 id="stat-queries">0</h3>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-label">Nível Hierárquico</span>
+                                        <h3 id="stat-role" class="text-accent">USUÁRIO</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card" style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-color: var(--accent);">
+                                <div>
+                                    <h4 style="margin-bottom: 0.4rem; color: white;"><i class="fas fa-code"></i> Suporte Direto com o Desenvolvedor</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Encontrou alguma anomalia, precisa de ajuda técnica ou quer sugerir um novo módulo? Fale agora mesmo com nosso engenheiro.</p>
+                                </div>
+                                <a href="https://t.me/zenkbuscabot" target="_blank" class="btn-premium btn-glow" style="text-decoration: none; width: auto; margin: 0; white-space: nowrap;"><i class="fab fa-telegram"></i> Falar com o Dev</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <div id="sidebar-overlay" class="mobile-overlay"></div>
+
+        
+        <nav class="bottom-nav">
+            <button id="bnav-profile"><i class="fas fa-user-circle"></i></button>
+            <button id="bnav-redeem"><i class="fas fa-key"></i></button>
+            <button id="bnav-search" class="active"><i class="fas fa-crosshairs"></i></button>
+            <button id="bnav-plans"><i class="fas fa-crown"></i></button>
+            <button id="bnav-logout"><i class="fas fa-sign-out-alt"></i></button>
+        </nav>
+    </div>
+
+    
+    <div id="toast" class="toast hidden"></div>
+
+    <div id="modal-container" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-title">MODAL</h3>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/app.js?v=1.1"></script>
+</body>
+</html>
