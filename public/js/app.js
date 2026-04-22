@@ -504,7 +504,7 @@ function initApp() {
 
     const navAdminKeys = document.getElementById('nav-admin-keys');
     if (navAdminKeys) {
-        navAdminKeys.onclick = (e) => {
+        navAdminKeys.onclick = async (e) => {
             e.preventDefault();
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -513,9 +513,7 @@ function initApp() {
             modalBody.innerHTML = `
                 <div class="admin-actions">
                     <select id="gen-plan-select" style="width: 100%; padding: 0.8rem; background: var(--bg-surface); color: white; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif;">
-                        <option value="1d">Diário (1 dia)</option>
-                        <option value="7d">Semanal (7 dias)</option>
-                        <option value="31d">Mensal (31 dias)</option>
+                        <option value="">Carregando planos...</option>
                     </select>
                     <button id="btn-generate-key" class="btn-premium"><i class="fas fa-plus"></i> Gerar Nova Key</button>
                 </div>
@@ -524,10 +522,25 @@ function initApp() {
                 </div>
             `;
             modalContainer.classList.remove('hidden');
+            
+            try {
+                const plansRes = await fetch('/api/plans/admin/all', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                if (plansRes.ok) {
+                    const plans = await plansRes.json();
+                    const select = document.getElementById('gen-plan-select');
+                    select.innerHTML = plans.filter(p => p.active).map(p => 
+                        `<option value="${p._id}">${p.name} (${p.duration}) - R$ ${p.price.toFixed(2).replace('.', ',')}</option>`
+                    ).join('');
+                }
+            } catch (err) {}
+            
             loadAdminKeys();
 
             document.getElementById('btn-generate-key').onclick = async () => {
                 const plan = document.getElementById('gen-plan-select').value;
+                if (!plan) return showToast('Selecione um plano.', 'error');
                 try {
                     const res = await fetch('/api/keys/generate', {
                         method: 'POST',
@@ -564,7 +577,209 @@ function initApp() {
             } else {
                 list.innerHTML = `<p style="text-align: center; color: #ef4444;">Erro: Servidor recusou a listagem de chaves.</p>`;
             }
-        } catch (err) { list.innerHTML = '<p style="text-align: center; color: #ef4444;">Erro de conexão com servidor.</p>'; }
+        } catch (err) { list.innerHTML = '<p style="text-align: center; color: #ef4444;">Erro de conexao com servidor.</p>'; }
+    }
+
+    const navAdminPlans = document.getElementById('nav-admin-plans');
+    if (navAdminPlans) {
+        navAdminPlans.onclick = (e) => {
+            e.preventDefault();
+            openAdminPlansModal();
+        };
+    }
+
+    async function openAdminPlansModal() {
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        
+        modalTitle.textContent = 'Gerenciar Planos';
+        modalBody.innerHTML = `
+            <div class="admin-actions" style="margin-bottom: 1.5rem;">
+                <button id="btn-new-plan" class="btn-premium" style="width: 100%;"><i class="fas fa-plus"></i> Criar Novo Plano</button>
+            </div>
+            <div id="admin-plans-list" style="display: flex; flex-direction: column; gap: 1rem; max-height: 400px; overflow-y: auto;">
+                <div class="query-loader"><div class="spinner"></div></div>
+            </div>
+        `;
+        modalContainer.classList.remove('hidden');
+        loadAdminPlans();
+
+        document.getElementById('btn-new-plan').onclick = () => openPlanForm(null);
+    }
+
+    async function loadAdminPlans() {
+        const list = document.getElementById('admin-plans-list');
+        try {
+            const res = await fetch('/api/plans/admin/all', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            if (res.ok) {
+                const plans = await res.json();
+                list.innerHTML = plans.length ? plans.map(p => `
+                    <div class="plan-admin-item" style="background: var(--bg-panel); border: 1px solid ${p.active ? 'var(--accent)' : 'var(--border-color)'}; padding: 1rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; color: white; font-size: 1rem;">${p.name}</span>
+                            <span class="plan-tag" style="background: ${p.active ? 'var(--accent)' : '#ef4444'}; color: ${p.active ? 'black' : 'white'};">${p.active ? 'ATIVO' : 'INATIVO'}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            <div><span style="opacity: 0.7;">ID:</span> <b style="color: white;">${p._id}</b></div>
+                            <div><span style="opacity: 0.7;">Duracao:</span> <b style="color: white;">${p.duration}</b></div>
+                            <div><span style="opacity: 0.7;">Preco:</span> <b style="color: var(--accent);">R$ ${p.price.toFixed(2).replace('.', ',')}</b></div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-outline btn-edit-plan" data-id="${p._id}" style="flex: 1; padding: 0.5rem; font-size: 0.8rem;"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn-outline btn-toggle-plan" data-id="${p._id}" data-active="${p.active}" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; border-color: ${p.active ? '#ef4444' : 'var(--accent)'}; color: ${p.active ? '#ef4444' : 'var(--accent)'};">
+                                <i class="fas fa-${p.active ? 'eye-slash' : 'eye'}"></i> ${p.active ? 'Desativar' : 'Ativar'}
+                            </button>
+                            <button class="btn-outline btn-delete-plan" data-id="${p._id}" style="padding: 0.5rem; font-size: 0.8rem; border-color: #ef4444; color: #ef4444;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('') : '<p style="text-align: center; color: var(--text-secondary)">Nenhum plano cadastrado.</p>';
+                
+                document.querySelectorAll('.btn-edit-plan').forEach(btn => {
+                    btn.onclick = () => {
+                        const plan = plans.find(p => p._id === btn.dataset.id);
+                        if (plan) openPlanForm(plan);
+                    };
+                });
+                
+                document.querySelectorAll('.btn-toggle-plan').forEach(btn => {
+                    btn.onclick = async () => {
+                        const isActive = btn.dataset.active === 'true';
+                        await updatePlan(btn.dataset.id, { active: !isActive });
+                    };
+                });
+                
+                document.querySelectorAll('.btn-delete-plan').forEach(btn => {
+                    btn.onclick = () => deletePlan(btn.dataset.id);
+                });
+            } else {
+                list.innerHTML = `<p style="text-align: center; color: #ef4444;">Erro ao carregar planos.</p>`;
+            }
+        } catch (err) {
+            list.innerHTML = '<p style="text-align: center; color: #ef4444;">Erro de conexao com servidor.</p>';
+        }
+    }
+
+    function openPlanForm(plan) {
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        
+        modalTitle.textContent = plan ? 'Editar Plano' : 'Criar Novo Plano';
+        modalBody.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="input-field">
+                    <label>ID do Plano (ex: 1d, 7d, 31d)</label>
+                    <input type="text" id="plan-id" value="${plan ? plan._id : ''}" ${plan ? 'disabled style="opacity: 0.6;"' : ''} placeholder="Ex: 15d">
+                </div>
+                <div class="input-field">
+                    <label>Nome do Plano</label>
+                    <input type="text" id="plan-name" value="${plan ? plan.name : ''}" placeholder="Ex: Plano Quinzenal">
+                </div>
+                <div class="input-field">
+                    <label>Descricao da Duracao</label>
+                    <input type="text" id="plan-duration" value="${plan ? plan.duration : ''}" placeholder="Ex: 15 dias">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-field">
+                        <label>Duracao em Dias</label>
+                        <input type="number" id="plan-days" value="${plan ? plan.durationDays : ''}" placeholder="15" min="1">
+                    </div>
+                    <div class="input-field">
+                        <label>Preco (R$)</label>
+                        <input type="number" id="plan-price" value="${plan ? plan.price : ''}" placeholder="35.00" step="0.01" min="0">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button id="btn-back-plans" class="btn-outline" style="flex: 1;"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <button id="btn-save-plan" class="btn-premium" style="flex: 2;"><i class="fas fa-save"></i> ${plan ? 'Salvar Alteracoes' : 'Criar Plano'}</button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('btn-back-plans').onclick = openAdminPlansModal;
+        
+        document.getElementById('btn-save-plan').onclick = async () => {
+            const id = document.getElementById('plan-id').value.trim();
+            const name = document.getElementById('plan-name').value.trim();
+            const duration = document.getElementById('plan-duration').value.trim();
+            const durationDays = document.getElementById('plan-days').value;
+            const price = document.getElementById('plan-price').value;
+            
+            if (!id || !name || !duration || !durationDays || !price) {
+                return showToast('Preencha todos os campos.', 'error');
+            }
+            
+            if (plan) {
+                await updatePlan(id, { name, duration, durationDays, price });
+            } else {
+                await createPlan({ id, name, duration, durationDays, price });
+            }
+        };
+    }
+
+    async function createPlan(data) {
+        try {
+            const res = await fetch('/api/plans/admin/create', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (res.ok) {
+                showToast('Plano criado com sucesso!', 'success');
+                openAdminPlansModal();
+            } else {
+                showToast(result.error || 'Erro ao criar plano.', 'error');
+            }
+        } catch (err) {
+            showToast('Erro de conexao.', 'error');
+        }
+    }
+
+    async function updatePlan(id, data) {
+        try {
+            const res = await fetch(`/api/plans/admin/update/${id}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (res.ok) {
+                showToast('Plano atualizado!', 'success');
+                openAdminPlansModal();
+            } else {
+                showToast(result.error || 'Erro ao atualizar.', 'error');
+            }
+        } catch (err) {
+            showToast('Erro de conexao.', 'error');
+        }
+    }
+
+    async function deletePlan(id) {
+        if (!confirm('Tem certeza que deseja excluir este plano?')) return;
+        
+        try {
+            const res = await fetch(`/api/plans/admin/delete/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            const result = await res.json();
+            if (res.ok) {
+                showToast('Plano excluido!', 'success');
+                loadAdminPlans();
+            } else {
+                showToast(result.error || 'Erro ao excluir.', 'error');
+            }
+        } catch (err) {
+            showToast('Erro de conexao.', 'error');
+        }
     }
 
     searchBtn.addEventListener('click', performSearch);

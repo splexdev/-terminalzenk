@@ -2,9 +2,9 @@ import express from 'express';
 import crypto from 'crypto';
 import { auth } from '../middleware/auth.js';
 import { users } from '../database/mongodb/users.js';
+import { plans } from '../database/mongodb/plans.js';
 import axios from 'axios';
 import QRCode from 'qrcode';
-import { PLAN_CONFIG } from '../config/plans.js';
 import { io } from "socket.io-client";
 
 const router = express.Router();
@@ -23,21 +23,15 @@ function getDiscordWebhook() {
 
 const DISCORD_WEBHOOK = getDiscordWebhook();
 
-const planDurations = {
-    '1d': 1 * 24 * 60 * 60 * 1000,
-    '7d': 7 * 24 * 60 * 60 * 1000,
-    '31d': 31 * 24 * 60 * 60 * 1000
-};
-
 router.post('/create', auth, async (req, res) => {
     try {
         const { plan } = req.body;
-        const planInfo = PLAN_CONFIG[plan];
+        const planInfo = await plans.findById(plan);
         const userId = req.userId;
         const PIXGO_TOKEN = process.env.PIXGO_API_KEY;
         const APP_URL = process.env.APP_URL || "https://terminalzenk.net";
         
-        if (!planInfo) return res.status(400).json({ error: 'Plano inválido.' });
+        if (!planInfo || !planInfo.active) return res.status(400).json({ error: 'Plano invalido.' });
 
         console.log(`Gerando PIX: R$ ${planInfo.price} para o plano ${plan}`);
 
@@ -72,7 +66,7 @@ router.post('/create', auth, async (req, res) => {
                     
                     const user = await users.findById(userId);
                     if (user) {
-                        const duration = planDurations[plan] || 0;
+                        const duration = (planInfo.durationDays || 0) * 24 * 60 * 60 * 1000;
                         const currentExpiresAt = (user.expiresAt && user.expiresAt > Date.now()) ? user.expiresAt : Date.now();
                         const planName = planInfo.name;
 
@@ -164,18 +158,19 @@ router.post('/webhook', async (req, res) => {
                     return res.status(200).send('OK');
                 }
 
+                const allPlans = await plans.find({ active: true });
                 let matchedPlanId = null;
                 let matchedPlanInfo = null;
-                for (const [key, plan] of Object.entries(PLAN_CONFIG)) {
+                for (const plan of allPlans) {
                     if (Math.abs(parseFloat(plan.price) - parseFloat(amount)) < 0.01) {
-                        matchedPlanId = key;
+                        matchedPlanId = plan._id;
                         matchedPlanInfo = plan;
                         break;
                     }
                 }
 
                 if (matchedPlanId) {
-                    const duration = planDurations[matchedPlanId] || 0;
+                    const duration = (matchedPlanInfo.durationDays || 0) * 24 * 60 * 60 * 1000;
                     const currentExpiresAt = (user.expiresAt && user.expiresAt > Date.now()) ? user.expiresAt : Date.now();
                     const planName = matchedPlanInfo.name;
 
@@ -201,7 +196,7 @@ router.post('/webhook', async (req, res) => {
 
                     console.log(`✅ Webhook Confirmado: Saldo de ${duration / (24 * 60 * 60 * 1000)} dias ativado para ${user.username}`);
                 } else {
-                    console.warn(`⚠️ Webhook Aviso: Pagamento de R$ ${amount} recebido, mas não bate com nenhum preço em PLAN_CONFIG.`);
+                    console.warn(`⚠️ Webhook Aviso: Pagamento de R$ ${amount} recebido, mas nao bate com nenhum preco de plano.`);
                 }
             }
         res.status(200).send('OK');
